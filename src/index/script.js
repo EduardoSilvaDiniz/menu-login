@@ -2,24 +2,29 @@ const url = "http://0.0.0.0:8080/login"
 
 document.getElementById('loginForm').addEventListener('submit', async function(event) {
   event.preventDefault();
-  const resposta = await fetch(url)
+  const username: document.getElementById('username').value;
 
-  console.log(resposta)
-  //
-  //let data = { username: document.getElementById('username'), password: document.getElementById('password') };
+  const password: document.getElementById('password').value;
 
-  //fetch('', {
-  //  // method: 'POST',
-  //  // headers: {
-  //  //   'Content-Type': 'application/json',
-  //  // },
-  //  // boby: JSON.stringify(data),
-  //})
-  //  //.then(response => response.json())
-  //  .then(data => {
-  //    console.log('resposta do backend', data);
-  //  })
-  //  .catch(error => {
-  //    console.error('erro ao enviar os dados', error);
-  //  })
+  console.log(username)
+  console.log(password)
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      boby: JSON.stringify({ username, password }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Erro na requisição: ' + response.statusText);
+    }
+    const responseData = await response.json();
+    console.log('Resposta do backend:', responseData);
+
+  } catch (error) {
+    console.error('Erro ao enviar os dados:', error);
+  }
 });
