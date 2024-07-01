@@ -1,30 +1,35 @@
-const url = "http://0.0.0.0:8080/login"
+const url = "http://localhost:8080/post"
 
-document.getElementById('loginForm').addEventListener('submit', async function(event) {
-  event.preventDefault();
-  const username: document.getElementById('username').value;
+document.getElementById('login').addEventListener('submit', async function() {
+  // const username = document.getElementById('username').value;
+  // const password = document.getElementById('password').value;
 
-  const password: document.getElementById('password').value;
+  // console.log(username)
+  // console.log(password)
+  const username = "edu"
+  const password = "123"
 
-  console.log(username)
-  console.log(password)
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
 
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      boby: JSON.stringify({ username, password }),
+  var myInit = {
+    method: "POST",
+    Headers: myHeaders,
+    mode: "cors",
+    cache: "default",
+    boby: JSON.stringify({ "username": username, "password": password })
+  };
+
+  fetch(url, myInit)
+    .then(function(response) {
+      if (response.ok) {
+        console.log("tudo OK!");
+        console.log(response.statusText)
+      } else {
+        console.log("API respondeu not ok");
+        console.log(response.statusText)
+      }
+    }).catch(function(error) {
+      console.log("algo deu errado: " + error.message);
     });
-
-    if (!response.ok) {
-      throw new Error('Erro na requisição: ' + response.statusText);
-    }
-    const responseData = await response.json();
-    console.log('Resposta do backend:', responseData);
-
-  } catch (error) {
-    console.error('Erro ao enviar os dados:', error);
-  }
 });

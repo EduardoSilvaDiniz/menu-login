@@ -1,14 +1,12 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
+	//"fmt"
 	"net/http"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
+	// "golang.org/x/crypto/bcrypt"
 )
 
 type user struct {
@@ -21,24 +19,22 @@ func main() {
 	startAPI()
 }
 
-func createHash() {
-	users := map[string][]uint8{}
-
-	hash, err := bcrypt.GenerateFromPassword([]byte("123"), 10)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	users["edu"] = hash // salva o novo usuario
-
-	user := "edu"  // json fake
-	pass := "0123" // json fake
-
-	err = bcrypt.CompareHashAndPassword(users[user], []byte(pass))
-	if err != nil {
-		fmt.Println(err)
-	}
-}
+//func addUser(user, password string) {
+//	hash, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+//	if err != nil {
+//		panic(hash)
+//	}
+//
+//	users[user] = hash
+//}
+//
+//func passwordCheck(user, password string) bool {
+//	err := bcrypt.CompareHashAndPassword(users[user], []byte(password))
+//	if err != nil {
+//		return false
+//	}
+//	return true
+//}
 
 func startWeb() {
 	pagina := http.FileServer(http.Dir("./src/index/"))
@@ -56,23 +52,16 @@ func startAPI() {
 		AllowCredentials: true,
 	}))
 
-	router.GET("/login", func(ctx *gin.Context) {
-		jsonData, err := io.ReadAll(ctx.Request.Body)
-		if err != nil {
-			fmt.Println("erro ao recebe json")
-		}
-		jsonObj, err := json.Marshal(jsonData)
-		if err != nil {
-			fmt.Println(err)
-		}
+	router.POST("/post", func(ctx *gin.Context) {
+		var usuario user
+		ctx.BindJSON(&usuario)
+		ctx.JSON(200, usuario)
+	})
 
-		var users user
-		errr := json.Unmarshal(jsonObj, &users)
-		if errr != nil {
-			fmt.Println(errr)
-		}
-
-		fmt.Println(users)
+	router.GET("/get", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, gin.H{
+			"message": "pong",
+		})
 	})
 
 	router.Run()
