@@ -1,16 +1,11 @@
 const url = "http://localhost:8080/post"
 
-document.getElementById('login').addEventListener('submit', async function() {
-  // const username = document.getElementById('username').value;
-  // const password = document.getElementById('password').value;
+document.getElementById('login').addEventListener('submit', async function () {
+  const username = document.getElementById('username').value
+  const password = document.getElementById('password').value
 
-  // console.log(username)
-  // console.log(password)
-  const username = "edu"
-  const password = "123"
-
-  var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
+  var myHeaders = new Headers()
+  myHeaders.append("Content-Type", "application/json")
 
   var myInit = {
     method: "POST",
@@ -18,18 +13,18 @@ document.getElementById('login').addEventListener('submit', async function() {
     mode: "cors",
     cache: "default",
     boby: JSON.stringify({ "username": username, "password": password })
-  };
+  }
 
   fetch(url, myInit)
-    .then(function(response) {
+    .then(function (response) {
       if (response.ok) {
-        console.log("tudo OK!");
+        console.log("tudo OK!")
         console.log(response.statusText)
       } else {
-        console.log("API respondeu not ok");
+        console.log("API respondeu not ok")
         console.log(response.statusText)
       }
-    }).catch(function(error) {
-      console.log("algo deu errado: " + error.message);
-    });
-});
+    }).catch(function (error) {
+      console.log("algo deu errado: " + error.message)
+    })
+})
