@@ -1,8 +1,10 @@
 package controllers
 
 import (
-	entities "menu-login/src/api/entities"
+	"fmt"
 	"net/http"
+
+	entities "menu-login/src/api/entities"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,10 +27,13 @@ func (u *loginController) Create(ctx *gin.Context) { // POST
 	user := entities.NewUser()
 
 	if err := ctx.BindJSON(&user); err != nil {
+		fmt.Println(err)
 		return
 	}
 
 	u.users = append(u.users, *user)
 
-	ctx.JSON(http.StatusOK, *user)
+	ctx.JSON(http.StatusOK, gin.H{
+		"username": user.Username, "password": user.Password,
+	})
 }

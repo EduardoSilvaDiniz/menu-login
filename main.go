@@ -1,36 +1,57 @@
 package main
 
 import (
+	"fmt"
+	"html/template"
 	"net/http"
+)
 
-	router "menu-login/src/api/routes"
-
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
+var (
+	tpl   *template.Template
+	users map[string]string
 )
 
 func main() {
-	// go startWeb()
-	startAPI()
+	tpl, _ = template.ParseGlob("src/index/*.html")
+	http.HandleFunc("/login", loginHandler)
+	http.HandleFunc("/loginauth", loginAuthHandler)
+	http.HandleFunc("/register", registerHandler)
+	http.HandleFunc("/registerauth", registerAuthHandler)
+	http.ListenAndServe("localhost:8080", nil)
 }
 
-func startWeb() {
-	pagina := http.FileServer(http.Dir("./src/index/"))
-	http.Handle("/menu/", http.StripPrefix("/menu/", pagina))
-	http.ListenAndServe(":9090", nil)
+func loginHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("******loginHandler running**********")
+	tpl.ExecuteTemplate(w, "login.html", nil)
 }
 
-func startAPI() {
-	app := gin.Default()
-	app.Use(cors.New(cors.Config{
-		AllowAllOrigins:  true,
-		AllowMethods:     []string{"PUT", "PATCH"},
-		AllowHeaders:     []string{"Origin"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-	}))
+func loginAuthHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("******loginAuthHandler running**********")
+	r.ParseForm()
+	username := r.FormValue("username")
+	password := r.FormValue("password")
+	fmt.Println("username:", username, "password: ", password)
 
-	router.AppRoutes(app)
+	for user := range users {
+		if user == username && users[user] == password {
+			fmt.Fprint(w, "you have successfully logged in :)")
+			return
+		}
+	}
+	fmt.Fprint(w, "incorrent password")
+	tpl.ExecuteTemplate(w, "login.html", "check username and password")
+}
 
-	app.Run()
+func registerHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("******registerHandler running**********")
+	tpl.ExecuteTemplate(w, "register.html", nil)
+}
+
+func registerAuthHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("******registerAuthHandle running**********")
+	r.ParseForm()
+	username := r.FormValue("username")
+	password := r.FormValue("password")
+
+	users[username] = password
 }
